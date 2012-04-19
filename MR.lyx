@@ -681,6 +681,13 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\left\{ (hora\_des,hora\_has)\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset VSpace bigskip
 \end_inset
 
