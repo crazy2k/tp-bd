@@ -3,6 +3,9 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\usepackage{ulem}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -61,7 +64,61 @@
 
 \begin_body
 
-\begin_layout Title
+\begin_layout Section
+Hipótesis del Dominio
+\end_layout
+
+\begin_layout Itemize
+Un nivel de seguridad es menor que otro si su atributo 
+\begin_inset Formula $nivel$
+\end_inset
+
+ es menor.
+\end_layout
+
+\begin_layout Itemize
+El personal capacitado para un determinado nivel de seguridad podría acceder
+ a áreas con nivel de seguridad menor o igual.
+\end_layout
+
+\begin_layout Section
+Restricciones Adicionales del Diseño
+\end_layout
+
+\begin_layout Itemize
+El personal no profesional sólo puede tener acceso a áreas asociadas a un
+ nivel de seguridad para el cual se encuentra capacitado o uno menor.
+\end_layout
+
+\begin_layout Itemize
+En la relación 
+\begin_inset Formula $ContratadoPara$
+\end_inset
+
+, debe cumplirse que el atributo 
+\begin_inset Formula $fecha\_des$
+\end_inset
+
+ corresponda a una fecha anterior al atributo 
+\begin_inset Formula $fecha\_has$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+El valor de 
+\begin_inset Formula $n\_contrato$
+\end_inset
+
+ de la interrelación 
+\begin_inset Formula $ContratadoPara$
+\end_inset
+
+ no se repite.
+\end_layout
+
+\begin_layout Section
 Modelo Relacional
 \end_layout
 
@@ -138,7 +195,7 @@ Modelo Relacional
 \begin_layout Standard
 
 \series bold
-\begin_inset Formula $\mathbf{PersonalProfesional}(\underline{id\_persona},especialidad)$
+\begin_inset Formula $\mathbf{PersonalProfesional}(\underline{id\_persona},especialidad,tipo)$
 \end_inset
 
 
@@ -178,7 +235,7 @@ Modelo Relacional
 \begin_inset Formula $PersonalNoProfesional.id\_persona$
 \end_inset
 
- o (exclusivo) no estar en ninguno de los anteriores
+
 \end_layout
 
 \begin_layout Standard
@@ -189,7 +246,7 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{PersonalProfesionalPlanta}(\underline{id\_persona},n\_area)$
+\begin_inset Formula $\mathbf{PersonalProfesionalPlantaPermanente}(\underline{id\_persona},n\_area)$
 \end_inset
 
 
@@ -210,7 +267,7 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $PersonalProfesionalPlanta.id\_persona$
+\begin_inset Formula $PersonalProfesionalPlantaPermanente.id\_persona$
 \end_inset
 
  debe estar en 
@@ -225,14 +282,14 @@ Modelo Relacional
 \end_inset
 
  puede estar en 
-\begin_inset Formula $PersonalProfesionalPlanta.id\_persona$
+\begin_inset Formula $PersonalProfesionalPlantaPermanente.id\_persona$
 \end_inset
 
  o (exclusivo) 
 \begin_inset Formula $PersonalProfesionalContratado.id\_persona$
 \end_inset
 
- o (exclusivo) no estar en ninguno de los anteriores
+
 \end_layout
 
 \begin_layout Standard
@@ -243,7 +300,7 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{PersonalProfesionalContratado}(\underline{id\_persona},n\_contrato)$
+\begin_inset Formula $\mathbf{PersonalProfesionalContratado}(\underline{id\_persona})$
 \end_inset
 
 
@@ -264,14 +321,14 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{ContratadoPara}(\underline{id\_persona},\underline{n\_area},\underline{fecha\_des},\underline{fecha\_has},tarea)$
+\begin_inset Formula $\mathbf{ContratadoPara}(\underline{id\_persona},\underline{n\_area},fecha\_des,fecha\_has,tarea,\underline{n\_contrato})$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\left\{ (id\_persona,n\_area,fecha\_des,fecha\_has)\right\} $
+\begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\left\{ (id\_persona,n\_area,n\_contrato)\right\} $
 \end_inset
 
 
@@ -292,7 +349,7 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{Auditoría}(\underline{id\_aud},fecha,resultado,id\_persona,n\_area)$
+\begin_inset Formula $\mathbf{Auditoría}(\underline{id\_aud},fecha,resultado,id\_persona,n\_area,n\_contrato)$
 \end_inset
 
 
@@ -306,29 +363,29 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{FK}=\left\{ id\_persona,n\_area\right\} $
+\begin_inset Formula $\mathbf{FK}=\left\{ (id\_persona,n\_area,n\_contrato)\right\} $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $(Auditoría.id\_persona,Auditoría.n\_area)$
+\begin_inset Formula $(Auditoría.id\_persona,Auditoría.n\_area,Auditoría.n\_contrato)$
 \end_inset
 
  debe estar en 
-\begin_inset Formula $(ContratadoPara.id\_persona,ContratadoPara.n\_area)$
+\begin_inset Formula $(ContratadoPara.id\_persona,ContratadoPara.n\_area,ContratadoPara.n\_contrato)$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $(ContratadoPara.id\_persona,ContratadoPara.n\_area)$
+\begin_inset Formula $(ContratadoPara.id\_persona,ContratadoPara.n\_area,ContratadoPara.n\_contrato)$
 \end_inset
 
  puede no estar en 
-\begin_inset Formula $(Auditoría.id\_persona,Auditoría.n\_area)$
+\begin_inset Formula $(Auditoría.id\_persona,Auditoría.n\_area,Auditoría.n\_contrato)$
 \end_inset
 
 
@@ -390,7 +447,7 @@ Modelo Relacional
 \end_inset
 
  puede no estar en 
-\begin_inset Formula $Trabaja.id\_persona$
+\begin_inset Formula $IngresaAbandona.id\_persona$
 \end_inset
 
 
@@ -401,14 +458,14 @@ Modelo Relacional
 \end_inset
 
  puede no estar en 
-\begin_inset Formula $Trabaja.n\_area$
+\begin_inset Formula $IngresaAbandona.n\_area$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $Trabaja.id\_persona$
+\begin_inset Formula $IngresaAbandona.id\_persona$
 \end_inset
 
  debe estar en 
@@ -419,7 +476,7 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $Trabaja.n\_area$
+\begin_inset Formula $IngresaAbandona.n\_area$
 \end_inset
 
  debe estar en 
@@ -483,7 +540,7 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{FK=\left\{ n\_area,hora\_des,hora\_has,id\_persona\right\} }$
+\begin_inset Formula $\mathbf{FK=\left\{ n\_area,(hora\_des,hora\_has),id\_persona\right\} }$
 \end_inset
 
 
@@ -528,6 +585,17 @@ Modelo Relacional
 
  puede no estar en 
 \begin_inset Formula $TieneAccesoA.n\_area$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $(Turno.hora\_des,Turno.hora\_has)$
+\end_inset
+
+ puede no estar en 
+\begin_inset Formula $(TieneAccesoA.hora\_des,TieneAccesoA.hora\_has)$
 \end_inset
 
 
@@ -661,6 +729,10 @@ Modelo Relacional
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Modelo Relacional
 \end_layout
 
 \end_body
