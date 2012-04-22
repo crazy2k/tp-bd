@@ -77,8 +77,7 @@ Un nivel de seguridad es menor que otro si su atributo
 \end_layout
 
 \begin_layout Itemize
-El personal capacitado para un determinado nivel de seguridad podría acceder
- a áreas con nivel de seguridad menor o igual.
+Un personal jerárquico solo puede ingresar a un área de la cual es responsable.
 \end_layout
 
 \begin_layout Section
@@ -87,12 +86,12 @@ Restricciones Adicionales del Diseño
 
 \begin_layout Itemize
 El personal no profesional sólo puede tener acceso a áreas asociadas a un
- nivel de seguridad para el cual se encuentra capacitado o uno menor.
+ nivel de seguridad para el cual se encuentra capacitado.
 \end_layout
 
 \begin_layout Itemize
 En la relación 
-\begin_inset Formula $ContratadoPara$
+\begin_inset Formula $Trabaja$
 \end_inset
 
 , debe cumplirse que el atributo 
@@ -107,15 +106,9 @@ En la relación
 \end_layout
 
 \begin_layout Itemize
-El valor de 
-\begin_inset Formula $n\_contrato$
-\end_inset
-
- de la interrelación 
-\begin_inset Formula $ContratadoPara$
-\end_inset
-
- no se repite.
+Un personal no puede abandonar un área sin haber antes ingresado en la misma.
+ Además para ingresar a un área, si tuvo un ingreso anterior, ese ingreso
+ tiene que tener su respectivo abandono.
 \end_layout
 
 \begin_layout Section
@@ -321,14 +314,14 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{ContratadoPara}(\underline{id\_persona},\underline{n\_area},fecha\_des,fecha\_has,tarea,\underline{n\_contrato})$
+\begin_inset Formula $\mathbf{Trabajo}(\underline{n\_contrato},fecha\_des,fecha\_has,tarea,n\_area,id\_persona)$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\left\{ (id\_persona,n\_area,n\_contrato)\right\} $
+\begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\left\{ n\_contrato\right\} $
 \end_inset
 
 
@@ -349,7 +342,7 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{Auditoría}(\underline{id\_aud},fecha,resultado,id\_persona,n\_area,n\_contrato)$
+\begin_inset Formula $\mathbf{Auditoría}(\underline{id\_aud},fecha,resultado,n\_contrato)$
 \end_inset
 
 
@@ -363,29 +356,29 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{FK}=\left\{ (id\_persona,n\_area,n\_contrato)\right\} $
+\begin_inset Formula $\mathbf{FK}=\left\{ n\_contrato\right\} $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $(Auditoría.id\_persona,Auditoría.n\_area,Auditoría.n\_contrato)$
+\begin_inset Formula $Auditoría.n\_contrato$
 \end_inset
 
  debe estar en 
-\begin_inset Formula $(ContratadoPara.id\_persona,ContratadoPara.n\_area,ContratadoPara.n\_contrato)$
+\begin_inset Formula $Trabajo.n\_contrato$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $(ContratadoPara.id\_persona,ContratadoPara.n\_area,ContratadoPara.n\_contrato)$
+\begin_inset Formula $Trabajo.n\_contrato$
 \end_inset
 
  puede no estar en 
-\begin_inset Formula $(Auditoría.id\_persona,Auditoría.n\_area,Auditoría.n\_contrato)$
+\begin_inset Formula $Auditoría.n\_contrato$
 \end_inset
 
 
@@ -401,14 +394,32 @@ Modelo Relacional
 \begin_layout Standard
 
 \series bold
-\begin_inset Formula $\mathbf{PersonalNoProfesional}(\underline{id\_persona})$
+\begin_inset Formula $\mathbf{PersonalNoProfesional}(\underline{id\_persona},nivel)$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\mathbf{FK}=\left\{ id\_persona\right\} $
+\begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\left\{ id\_persona\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathbf{FK}=\left\{ nivel\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $PersonalNoProfesional.nivel$
+\end_inset
+
+ debe estar en 
+\begin_inset Formula $NivelDeSeguridad.nivel$
 \end_inset
 
 
@@ -708,38 +719,6 @@ Modelo Relacional
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-\begin_inset VSpace bigskip
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\mathbf{CapacitadoPara}(\underline{nivel},\underline{id\_persona})$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\left\{ (nivel,id\_persona)\right\} $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\mathbf{FK}=\left\{ nivel,id\_persona\right\} $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Modelo Relacional
 \end_layout
 
 \end_body
