@@ -75,8 +75,6 @@ and a.nivel > ( select max(b.nivel) from `Area` b, `TieneAccesoA` t
 );
 END
 
-DELIMITER ;
-
 /*
 
 Implementar un control en la base de datos que impida que a un empleado se le
