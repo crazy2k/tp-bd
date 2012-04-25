@@ -5,6 +5,11 @@
 \textclass article
 \begin_preamble
 \usepackage{ulem}
+\date{}
+\setcounter{page}{-1}
+\sloppy
+ \exhyphenpenalty=10000
+\hyphenpenalty=10000 
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -756,6 +761,8 @@ Modelo Relacional
 \end_layout
 
 \begin_layout Standard
+
+\lang english
 \begin_inset Formula $\mathbf{Auditoría}(\underline{id\_aud},fecha,resultado,n\_contrato)$
 \end_inset
 
