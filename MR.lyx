@@ -77,7 +77,68 @@ Un nivel de seguridad es menor que otro si su atributo
 \end_layout
 
 \begin_layout Itemize
+Existen niveles de seguridad para los cuales aún no hay personal no profesional
+ capacitado ni áreas asociadas.
+\end_layout
+
+\begin_layout Itemize
 Un personal jerárquico solo puede ingresar a un área de la cual es responsable.
+\end_layout
+
+\begin_layout Itemize
+Puede haber varios integrantes del personal no profesional con acceso a
+ una determinada área en un mismo turno.
+\end_layout
+
+\begin_layout Itemize
+Un personal no profesional puede tener acceso a un área en distintos turnos.
+\end_layout
+
+\begin_layout Itemize
+En un mismo turno, un personal no profesional puede tener acceso a distintas
+ áreas.
+\end_layout
+
+\begin_layout Itemize
+Existen integrantes del personal no profesional que no tienen acceso a ningún
+ area en ningún turno.
+\end_layout
+
+\begin_layout Itemize
+Existen áreas a las que no tiene acceso ningún personal no profesional en
+ ningún turno.
+\end_layout
+
+\begin_layout Itemize
+Existen turnos para los cuales no hay integrantes del personal no profesional
+ con acceso a algún area.
+\end_layout
+
+\begin_layout Itemize
+Los turnos, estandarizados dentro del laboratorio, representan franjas horarias
+ y pueden superponerse.
+\end_layout
+
+\begin_layout Itemize
+El personal profesional contratado puede ser contratado para realizar distintos
+ trabajos para distintas áreas.
+ Cada trabajo tiene una relación uno a uno con un contrato.
+\end_layout
+
+\begin_layout Itemize
+No existen integrantes del personal profesional contratado que no estén
+ contratados actualmente o lo hayan sido en el pasado.
+\end_layout
+
+\begin_layout Itemize
+Los intentos de ingreso o abandono del personal a las distintas áreas, junto
+ con su resultado satisfactorio o insatisfactorio, son almacenados e identificad
+os con un número de registro único.
+\end_layout
+
+\begin_layout Itemize
+Existen áreas en las cuales no trabaja ningún personal profesional de planta
+ permamente.
 \end_layout
 
 \begin_layout Section
@@ -111,6 +172,11 @@ Un personal no puede abandonar un área sin haber antes ingresado en la misma.
  tiene que tener su respectivo abandono.
 \end_layout
 
+\begin_layout Itemize
+No existen auditorías cuya fecha es anterior a la fecha de inicio del trabajo
+ que auditan.
+\end_layout
+
 \begin_layout Section
 Modelo Relacional
 \end_layout
@@ -134,6 +200,25 @@ Modelo Relacional
 \end_inset
 
 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Personal.id\_persona$
+\end_inset
+
+ debe estar en 
+\begin_inset Formula $PersonalJerárquico.id\_persona$
+\end_inset
+
+, o (exclusivo) en 
+\begin_inset Formula $PersonalProfesional.id\_persona$
+\end_inset
+
+ o (exclusivo) en 
+\begin_inset Formula $PersonalNoProfesional.id\_persona$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -212,25 +297,6 @@ Modelo Relacional
 
 \end_layout
 
-\begin_layout Itemize
-\begin_inset Formula $Personal.id\_persona$
-\end_inset
-
- puede estar en 
-\begin_inset Formula $PersonalProfesional.id\_persona$
-\end_inset
-
- o (exclusivo) 
-\begin_inset Formula $PersonalJerárquico.id\_persona$
-\end_inset
-
- o (exclusivo) 
-\begin_inset Formula $PersonalNoProfesional.id\_persona$
-\end_inset
-
-
-\end_layout
-
 \begin_layout Standard
 \begin_inset VSpace bigskip
 \end_inset
@@ -274,7 +340,7 @@ Modelo Relacional
 \begin_inset Formula $PersonalProfesional.id\_persona$
 \end_inset
 
- puede estar en 
+ debe estar en 
 \begin_inset Formula $PersonalProfesionalPlantaPermanente.id\_persona$
 \end_inset
 
@@ -301,6 +367,17 @@ Modelo Relacional
 
 \begin_layout Standard
 \begin_inset Formula $\mathbf{PK}=\mathbf{CK}=\mathbf{FK}=\left\{ id\_persona\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $PersonalProfesionalContratado.id\_persona$
+\end_inset
+
+ debe estar en 
+\begin_inset Formula $PersonalProfesional.id\_persona$
 \end_inset
 
 
