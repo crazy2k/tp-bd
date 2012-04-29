@@ -1,0 +1,2352 @@
+%!PS-Adobe-3.0
+%%Title: tp-db4.sql
+%%For: chudi
+%%Creator: a2ps version 4.14
+%%CreationDate: Wed Apr 25 19:56:02 2012
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 5
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed strings
+% Version 1.2 1/31/1990
+% Original Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.493857 def
+/cw 4.496314 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   522.321860 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(-- phpMyAdmin SQL Dump) c n
+(-- version 3.4.5deb1) N
+(-- http://www.phpmyadmin.net) N
+(--) N
+(-- Host: localhost) N
+(-- Generation Time: Apr 25, 2012 at 07:52 PM) N
+(-- Server version: 5.1.61) N
+(-- PHP Version: 5.3.6-13ubuntu3.6) N
+() p n
+(SET) K
+( SQL_MODE=") p
+(NO_AUTO_VALUE_ON_ZERO) str
+(";) p n
+(SET) K
+( time_zone = ") p
+(+00:00) str
+(";) p n
+() N
+() N
+(/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */) c
+(;) p n
+(/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */) c
+(;) p n
+(/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */) c
+(;) p n
+(/*!40101 SET NAMES utf8 */) c
+(;) p n
+() N
+(--) c n
+(-- Database: `tp-db3`) N
+(--) N
+() p n
+(DELIMITER $$) N
+(--) c n
+(-- Procedures) N
+(--) N
+(CREATE) K
+( DEFINER=`root`@`localhost` PROCEDURE `obtenerEmpleadosProfesionalesConAcc) p n
+(esoATodasLasAreasDeSuNivel`\(\)) N
+(BEGIN) N
+() N
+(select) K
+( p.nombre, p.apellido ) p
+(from) K
+( `Personal` p ) p
+(where) K
+( p.id_persona ) p
+(in) K
+( \() p n
+(SELECT) K
+( t.id_persona id_persona) p n
+() S 8 T () S 16 T () S
+(FROM) K
+( `TieneAccesoA` t) p n
+() S 8 T () S 16 T () S
+(group) K
+( ) p
+(by) K
+( \(t.id_persona\)) p n
+() S 8 T () S 16 T () S
+(having) K
+( count\(*\) = \() p
+(select) K
+( count\(*\) ) p
+(from) K
+( `Area` a, `PersonalNoPro) p n
+(fesional` p ) S
+(where) K
+( p.id_persona = t.id_persona ) p
+(and) K
+( a.nivel = p.nivel\)) p n
+(\);) N
+() N
+(END$$) N
+() N
+(CREATE) K
+( DEFINER=`root`@`localhost` PROCEDURE `obtenerIngresosSospechosos`\(\)) p n
+(BEGIN) N
+() N
+(select) K
+( p.nombre, p.apellido ) p
+(from) K
+( `Personal` p ) p
+(where) K
+( p.id_persona ) p
+(in) K
+( ) p n
+() S 8 T (\() N
+() S 8 T () S 16 T () S
+(select) K
+( id_persona ) p
+(from) K
+( \() p 48 T () S 56 T () S 64 T () S 72 T () N
+() S 8 T () S 16 T () S 24 T (\() S
+(select) K
+( id_persona ) p
+(from) K
+( \() p
+(select) K
+( i.id_persona, count\(*\) c) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S
+(FROM) K
+(  `IngresaAbandona` i) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S
+(where) K
+( fecha > DATE_SUB\(NOW\(\), INTERVAL 1 MONTH\)) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S
+(and) K
+( i.autorizado = false) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S
+(group) K
+( ) p
+(by) K
+( \(i.id_persona \)) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S
+(having) K
+( \(c >= 5\)\) x) p n
+() S 8 T () S 16 T () S 24 T (\)) N
+() N
+() S 8 T () S 16 T () S 24 T () S 32 T () S
+(union) K n
+() p n
+() S 8 T () S 16 T () S 24 T (\() S
+(select) K
+( i.id_persona ) p
+(from) K
+( `IngresaAbandona` i, `Area` a) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S
+(where) K
+( i.n_area = a.n_area) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S
+(and) K
+( a.nivel > \( ) p
+(select) K
+( max\(b.nivel\) ) p
+(from) K
+( `Area` ) p n
+(b, `TieneAccesoA` t) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S
+(where) K
+( t.n_area =) p n
+( b.n_area) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S
+(and) K
+( t.id_persona) p n
+( = i.id_persona) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T (  \)) N
+() S 8 T () S 16 T () S 24 T (\)) N
+() S 8 T () S 16 T (\) k) N
+() S 8 T (\) ;) N
+(END$$) N
+(tp-db4.sql) (Page 1/9) (Apr 25, 12 19:52) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(DELIMITER ;) N
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `Area`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `Area` \() p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+( AUTO_INCREMENT,) p n
+(  `nom_ar` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nivel` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`n_area`\),) N
+(  KEY `nivel` \(`nivel`\)) N
+(\) ENGINE=InnoDB  ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT) p n
+(=7 ;) N
+() N
+(--) c n
+(-- Dumping data for table `Area`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Area` \(`n_area`, `nom_ar`, `nivel`\) ) p
+(VALUES) K n
+(\(1, ') p
+(Laboratorio Secreto) str
+(', 8000\),) p n
+(\(2, ') S
+(Laboratorio Libre Acceso) str
+(', 2000\),) p n
+(\(3, ') S
+(Laboratorio Nivel Medio) str
+(', 4000\),) p n
+(\(4, ') S
+(Lobby) str
+(', 2000\),) p n
+(\(5, ') S
+(Laboratorio para conquistar el mundo) str
+(', 8000\),) p n
+(\(6, ') S
+(Comedor) str
+(', 4000\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `Auditoria`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `Auditoria` \() p n
+(  `id_aud` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+( AUTO_INCREMENT,) p n
+(  `fecha` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `resultado` text COLLATE latin1_spanish_ci ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_contrato` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_aud`\),) N
+(  KEY `n_contrato` \(`n_contrato`\)) N
+(\) ENGINE=InnoDB  ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT) p n
+(=2 ;) N
+() N
+(--) c n
+(-- Dumping data for table `Auditoria`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Auditoria` \(`id_aud`, `fecha`, `resultado`, `n_contrato`\) ) p
+(VALUES) K n
+(\(1, ') p
+(2012-04-09) str
+(', ') p
+(Auditoria ok) str
+(', 1\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Stand-in structure for view `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`) N
+(--) N
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA` \() p n
+(`id_persona` int\(10\) unsigned) N
+(,`n_area` int\(10\) unsigned) N
+(\);) N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `Evento`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `Evento` \() p n
+(tp-db4.sql) (Page 2/9) (Apr 25, 12 19:52) title
+border
+grestore
+(Printed by chudi) rhead
+(tp-db4.sql) (1/5) (Wednesday April 25, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  `n_area` int\(10\) unsigned ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nro_evento` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `descrp` ) S
+(varchar) K
+(\(300\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`n_area`,`nro_evento`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `Evento`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Evento` \(`n_area`, `nro_evento`, `fecha`, `descrp`\) ) p
+(VALUES) K n
+(\(1, 1, ') p
+(2012-04-02) str
+(', ') p
+(Llegada de materiales al laboratorio) str
+('\),) p n
+(\(2, 2, ') S
+(2012-03-20) str
+(', ') p
+(Llegada del Catering para la inauguracion) str
+('\),) p n
+(\(2, 3, ') S
+(2012-03-28) str
+(', ') p
+(Fiesta de inauguracion del laboratorio) str
+('\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `IngresaAbandona`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `IngresaAbandona` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nro_registro` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha` datetime ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `autorizado` tinyint\(1\) ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `accion` tinyint\(1\) ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`,`n_area`,`nro_registro`\),) N
+(  KEY `n_area` \(`n_area`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `IngresaAbandona`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `IngresaAbandona` \(`id_persona`, `n_area`, `nro_registro`, `fecha`, ) p n
+(`autorizado`, `accion`\) ) S
+(VALUES) K n
+(\(1, 1, 0, ') p
+(2012-04-11 00:00:00) str
+(', 0, 0\),) p n
+(\(1, 1, 1, ') S
+(2012-04-10 00:00:00) str
+(', 1, 0\),) p n
+(\(1, 1, 2, ') S
+(2012-04-10 03:00:00) str
+(', 1, 1\),) p n
+(\(1, 1, 3, ') S
+(2012-04-11 00:00:00) str
+(', 0, 0\),) p n
+(\(1, 1, 4, ') S
+(2012-04-12 00:00:00) str
+(', 0, 0\),) p n
+(\(1, 1, 5, ') S
+(2012-04-13 00:00:00) str
+(', 0, 0\),) p n
+(\(1, 1, 6, ') S
+(2012-04-14 00:00:00) str
+(', 0, 0\),) p n
+(\(1, 1, 7, ') S
+(2012-04-15 00:00:00) str
+(', 0, 0\),) p n
+(\(3, 3, 9, ') S
+(2012-04-25 23:59:59) str
+(', 0, 0\),) p n
+(\(3, 6, 10, ') S
+(2012-04-19 00:00:00) str
+(', 0, 0\),) p n
+(\(4, 3, 8, ') S
+(2012-04-12 00:00:00) str
+(', 0, 0\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `NivelDeSeguridad`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `NivelDeSeguridad` \() p n
+(  `nivel` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+( AUTO_INCREMENT,) p n
+(  `nom_niv` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`nivel`\)) N
+(\) ENGINE=InnoDB  ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT) p n
+(=8001 ;) N
+() N
+(--) c n
+(-- Dumping data for table `NivelDeSeguridad`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `NivelDeSeguridad` \(`nivel`, `nom_niv`\) ) p
+(VALUES) K n
+(tp-db4.sql) (Page 3/9) (Apr 25, 12 19:52) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(\(2000, ') p
+(bajo) str
+('\),) p n
+(\(4000, ') S
+(medio) str
+('\),) p n
+(\(8000, ') S
+(alto) str
+('\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `Personal`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `Personal` \() p n
+(  `id_persona` int\(11\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+( AUTO_INCREMENT,) p n
+(  `nombre` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  `apellido` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  `contrasenia` ) S
+(varchar) K
+(\(20\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  `huella` ) S
+(varchar) K
+(\(200\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  `funcion` ) S
+(varchar) K
+(\(200\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\)) N
+(\) ENGINE=InnoDB  ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT) p n
+(=11 ;) N
+() N
+(--) c n
+(-- Dumping data for table `Personal`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Personal` \(`id_persona`, `nombre`, `apellido`, `contrasenia`, `huel) p n
+(la`, `funcion`\) ) S
+(VALUES) K n
+(\(1, ') p
+(Jacinto) str
+(', ') p
+(Lugones) str
+(', ') p
+(jlugones) str
+(', ') p
+(jacintolugones) str
+(', ') p
+(Jerarquico) str
+('\),) p n
+(\(2, ') S
+(Carlos) str
+(', ') p
+(Tevez) str
+(', ') p
+(ctevez) str
+(', ') p
+(carlostevez) str
+(', ') p
+(Profesional) str
+('\),) p n
+(\(3, ') S
+(Gustavo ) str
+(', ') p
+(Lopez) str
+(', ') p
+(glopez) str
+(', ') p
+(gustavolopez) str
+(', ') p
+(NoProfesional) str
+('\),) p n
+(\(4, ') S
+(Gonzalo) str
+(', ') p
+(Gonzalez) str
+(', ') p
+(ggonzalez) str
+(', ') p
+(gonzalogonzales) str
+(', ') p
+(Jerarquico) str
+('\),) p n
+(\(5, ') S
+(Honorio) str
+(', ') p
+(Urquiza) str
+(', ') p
+(hurquiza) str
+(', ') p
+(honoriourquiza) str
+(', ') p
+(Profesional) str
+('\),) p n
+(\(6, ') S
+(Hernan) str
+(', ') p
+(Diaz) str
+(', ') p
+(hdiaz) str
+(', ') p
+(hernandiaz) str
+(', ') p
+(NoProfesional) str
+('\),) p n
+(\(7, ') S
+(Leonardo) str
+(', ') p
+(Astrada) str
+(', ') p
+(lastrada) str
+(', ') p
+(leonardoastrada) str
+(', ') p
+(Jerarquico) str
+('\),) p n
+(\(8, ') S
+(Ramiro) str
+(', ') p
+(Rodriguez) str
+(', ') p
+(rrodriguez) str
+(', ') p
+(ramirorodriguez) str
+(', ') p
+(Profesional) str
+('\),) p n
+(\(9, ') S
+(Andres) str
+(', ') p
+(Nocioni) str
+(', ') p
+(anocioni) str
+(', ') p
+(andresnocioni) str
+(', ') p
+(Profesional) str
+('\),) p n
+(\(10, ') S
+(orlando) str
+(', ') p
+(lastrani) str
+(', ') p
+(olastrani) str
+(', ') p
+(orlandolastrani) str
+(', ') p
+(NoProfesional) str
+('\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `PersonalJerarquico`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `PersonalJerarquico` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha_ini` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\),) N
+(  KEY `n_area` \(`n_area`\),) N
+(  KEY `n_area_2` \(`n_area`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalJerarquico`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalJerarquico` \(`id_persona`, `fecha_ini`, `n_area`\) ) p
+(VALUES) K n
+(\(1, ') p
+(2012-04-22) str
+(', 1\),) p n
+(\(4, ') S
+(2012-04-22) str
+(', 2\),) p n
+(\(7, ') S
+(2012-04-22) str
+(', 3\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `PersonalNoProfesional`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `PersonalNoProfesional` \() p n
+(tp-db4.sql) (Page 4/9) (Apr 25, 12 19:52) title
+border
+grestore
+(Printed by chudi) rhead
+(tp-db4.sql) (2/5) (Wednesday April 25, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  `id_persona` int\(10\) unsigned ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nivel` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\),) N
+(  KEY `nivel` \(`nivel`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalNoProfesional`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalNoProfesional` \(`id_persona`, `nivel`\) ) p
+(VALUES) K n
+(\(3, 2000\),) p n
+(\(6, 4000\),) N
+(\(10, 8000\);) N
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `PersonalProfesional`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `PersonalProfesional` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `especialidad` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `tipo` ) S
+(varchar) K
+(\(200\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalProfesional`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalProfesional` \(`id_persona`, `especialidad`, `tipo`\) ) p
+(VALUES) K n
+(\(2, ') p
+(Cientifico) str
+(', ') p
+(PlantaPermanente) str
+('\),) p n
+(\(5, ') S
+(Bacteriologo) str
+(', ') p
+(PlantaPermanente) str
+('\),) p n
+(\(8, ') S
+(Fisico Nuclear) str
+(', ') p
+(Contratado) str
+('\),) p n
+(\(9, ') S
+(Analista) str
+(', ') p
+(Contratado) str
+('\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `PersonalProfesionalContratado`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `PersonalProfesionalContratado` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalProfesionalContratado`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalProfesionalContratado` \(`id_persona`\) ) p
+(VALUES) K n
+(\(8\),) p n
+(\(9\);) N
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `PersonalProfesionalPlantaPermanente`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `PersonalProfesionalPlantaPermanente` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\),) N
+(  KEY `n_area` \(`n_area`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(tp-db4.sql) (Page 5/9) (Apr 25, 12 19:52) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(--) c n
+(-- Dumping data for table `PersonalProfesionalPlantaPermanente`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalProfesionalPlantaPermanente` \(`id_persona`, `n_area`\) ) p
+(VALUE) K n
+(S) N
+(\(2, 1\),) p n
+(\(5, 2\);) N
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `TieneAccesoA`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `TieneAccesoA` \() p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `hora_des` time ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `hora_has` time ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`n_area`,`hora_des`,`hora_has`,`id_persona`\),) N
+(  KEY `hora_has` \(`hora_has`\),) N
+(  KEY `id_persona` \(`id_persona`\),) N
+(  KEY `hora_des` \(`hora_des`,`hora_has`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `TieneAccesoA`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `TieneAccesoA` \(`n_area`, `hora_des`, `hora_has`, `id_persona`\) ) p
+(VALU) K n
+(ES) N
+(\(1, ') p
+(16:00:00) str
+(', ') p
+(00:00:00) str
+(', 10\),) p n
+(\(2, ') S
+(00:00:00) str
+(', ') p
+(08:00:00) str
+(', 3\),) p n
+(\(5, ') S
+(00:00:00) str
+(', ') p
+(08:00:00) str
+(', 10\),) p n
+(\(3, ') S
+(08:00:00) str
+(', ') p
+(16:00:00) str
+(', 6\),) p n
+(\(4, ') S
+(08:00:00) str
+(', ') p
+(16:00:00) str
+(', 3\);) p n
+() N
+(--) c n
+(-- Triggers `TieneAccesoA`) N
+(--) N
+(DROP) K
+( ) p
+(TRIGGER) K
+( IF ) p
+(EXISTS) K
+( `ins_TieneAccesoA`;) p n
+(DELIMITER ) S
+(//) c n
+(CREATE) K
+( ) p
+(TRIGGER) K
+( `ins_TieneAccesoA` BEFORE ) p
+(INSERT) K
+( ) p
+(ON) K
+( `TieneAccesoA`) p n
+( ) S
+(FOR) K
+( EACH ) p
+(ROW) K
+( BEGIN) p n
+() S 8 T (DECLARE) S 16 T (NIVELAREA int;) N
+() S 8 T (DECLARE) S 16 T (NIVELPERSONAL int;) N
+() N
+() S 8 T () S
+(SET) K
+( NIVELAREA = \() p
+(SELECT) K
+( NIVEL ) p
+(FROM) K
+( Area ) p
+(WHERE) K
+( N_AREA = NEW.N_AREA\);) p n
+() S 8 T () S
+(SET) K
+( NIVELPERSONAL = \() p
+(SELECT) K
+( NIVEL ) p
+(FROM) K
+( PersonalNoProfesional ) p
+(WHERE) K
+( ID_PE) p n
+(RSONA = NEW.ID_PERSONA\);) N
+() N
+() S 8 T (IF NIVELPERSONAL <> NIVELAREA ) S
+(THEN) K
+( ) p n
+() S 8 T () S 16 T (CALL `NIVEL NO AUTORIZADO`;) N
+() S 8 T (END IF;) N
+(END) N
+(//) c n
+(DELIMITER ;) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `Trabajo`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `Trabajo` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(tp-db4.sql) (Page 6/9) (Apr 25, 12 19:52) title
+border
+grestore
+(Printed by chudi) rhead
+(tp-db4.sql) (3/5) (Wednesday April 25, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  `fecha_des` ) p
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha_has` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `tarea` ) S
+(varchar) K
+(\(200\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_contrato` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`n_contrato`\),) N
+(  KEY `n_contrato` \(`n_contrato`\),) N
+(  KEY `n_area` \(`n_area`\),) N
+(  KEY `Trabajo_fk_id_persona` \(`id_persona`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `Trabajo`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Trabajo` \(`id_persona`, `n_area`, `fecha_des`, `fecha_has`, `tarea`) p n
+(, `n_contrato`\) ) S
+(VALUES) K n
+(\(8, 1, ') p
+(2012-04-02) str
+(', ') p
+(2012-04-06) str
+(', ') p
+(Investigacion) str
+(', 1\),) p n
+(\(9, 2, ') S
+(2012-04-02) str
+(', ') p
+(2012-04-06) str
+(', ') p
+(Desarrollo) str
+(', 2\);) p n
+() N
+(--) c n
+(-- Triggers `Trabajo`) N
+(--) N
+(DROP) K
+( ) p
+(TRIGGER) K
+( IF ) p
+(EXISTS) K
+( `ins_fecha_correcta`;) p n
+(DELIMITER ) S
+(//) c n
+(CREATE) K
+( ) p
+(TRIGGER) K
+( `ins_fecha_correcta` BEFORE ) p
+(INSERT) K
+( ) p
+(ON) K
+( `Trabajo`) p n
+( ) S
+(FOR) K
+( EACH ) p
+(ROW) K
+( BEGIN) p n
+() S 8 T (IF NEW.FECHA_DES > NEW.FECHA_HAS ) S
+(THEN) K n
+() p 8 T () S 16 T (CALL `Fecha desde es mayor que fecha hasta`;) N
+() S 8 T (END IF;) N
+(END) N
+(//) c n
+(DELIMITER ;) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Table structure for table `Turno`) N
+(--) N
+() p n
+(CREATE) K
+( ) p
+(TABLE) K
+( IF ) p
+(NOT) K
+( ) p
+(EXISTS) K
+( `Turno` \() p n
+(  `hora_des` time ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `hora_has` time ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nom_tur` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`hora_des`,`hora_has`\),) N
+(  KEY `hora_has` \(`hora_has`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+() N
+(--) c n
+(-- Dumping data for table `Turno`) N
+(--) N
+() p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Turno` \(`hora_des`, `hora_has`, `nom_tur`\) ) p
+(VALUES) K n
+(\(') p
+(00:00:00) str
+(', ') p
+(08:00:00) str
+(', ') p
+(noche) str
+('\),) p n
+(\(') S
+(08:00:00) str
+(', ') p
+(16:00:00) str
+(', ') p
+(ma\303\261ana) str
+('\),) p n
+(\(') S
+(16:00:00) str
+(', ') p
+(00:00:00) str
+(', ') p
+(tarde) str
+('\);) p n
+() N
+(-- --------------------------------------------------------) c n
+() p n
+(--) c n
+(-- Structure for view `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`) N
+(--) N
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`;) p n
+() N
+(CREATE) K
+( ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER ) p
+(VIEW) K
+( ) p n
+(`EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA` ) S
+(AS) K
+( ) p
+(select) K
+( `p`.`id_persona` ) p
+(AS) K
+( `id_pe) p n
+(rsona`,`p`.`n_area` ) S
+(AS) K
+( `n_area` ) p
+(from) K
+( `IngresaAbandona` `p` ) p
+(where) K
+( \(\(`p`.`fecha` >) p n
+(= curdate\(\)\) ) S
+(and) K
+( \(`p`.`autorizado` = 0\) ) p
+(and) K
+( \() p
+(not) K
+(\() p
+(exists) K
+(\() p
+(select) K
+( `i`.`id_persona` ) p
+() K n
+(from) S
+( `IngresaAbandona` `i` ) p
+(where) K
+( \(\(`i`.`id_persona` = `p`.`id_persona`\) ) p
+(and) K
+( \(`p`) p n
+(.`fecha` > `i`.`fecha`\) ) S
+(and) K
+( \(`p`.`n_area` = `i`.`n_area`\) ) p
+(and) K
+( \(`i`.`autorizado` ) p n
+(tp-db4.sql) (Page 7/9) (Apr 25, 12 19:52) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(= 1\)\)\)\)\)\);) p n
+() N
+(--) c n
+(-- Constraints for dumped tables) N
+(--) N
+() p n
+(--) c n
+(-- Constraints for table `Area`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `Area`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `Area_fk_nivel` FOREIGN KEY \(`nivel`\) REFERENCES `NivelDeSeguri) p n
+(dad` \(`nivel`\);) N
+() N
+(--) c n
+(-- Constraints for table `Auditoria`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `Auditoria`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `Auditoria_fk_nro_contrato` FOREIGN KEY \(`n_contrato`\) REFERENC) p n
+(ES `Trabajo` \(`n_contrato`\);) N
+() N
+(--) c n
+(-- Constraints for table `Evento`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `Evento`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `Evento_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `Area` \(`n) p n
+(_area`\);) N
+() N
+(--) c n
+(-- Constraints for table `IngresaAbandona`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `IngresaAbandona`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `IngresaAbandona_fk_id_persona` FOREIGN KEY \(`id_persona`\) REFE) p n
+(RENCES `Personal` \(`id_persona`\),) N
+(  ) S
+(ADD) K
+( CONSTRAINT `IngresaAbandona_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `) p n
+(Area` \(`n_area`\);) N
+() N
+(--) c n
+(-- Constraints for table `PersonalJerarquico`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `PersonalJerarquico`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `PersonalJerarquico_fk_id_persona` FOREIGN KEY \(`id_persona`\) R) p n
+(EFERENCES `Personal` \(`id_persona`\),) N
+(  ) S
+(ADD) K
+( CONSTRAINT `PersonalJerarquico_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCE) p n
+(S `Area` \(`n_area`\);) N
+() N
+(--) c n
+(-- Constraints for table `PersonalNoProfesional`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `PersonalNoProfesional`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `PersonalNoProfesional_ibfk_1` FOREIGN KEY \(`id_persona`\) REFER) p n
+(ENCES `Personal` \(`id_persona`\),) N
+(  ) S
+(ADD) K
+( CONSTRAINT `PersonalNoProfesional_ibfk_2` FOREIGN KEY \(`nivel`\) REFERENCES) p n
+( `NivelDeSeguridad` \(`nivel`\);) N
+() N
+(--) c n
+(-- Constraints for table `PersonalProfesional`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `PersonalProfesional`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `PersonalProfesional_fk_id_persona` FOREIGN KEY \(`id_persona`\) ) p n
+(REFERENCES `Personal` \(`id_persona`\);) N
+() N
+(--) c n
+(-- Constraints for table `PersonalProfesionalContratado`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `PersonalProfesionalContratado`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `PersonalProfesionalContratado_fk_id_persona` FOREIGN KEY \(`id_) p n
+(persona`\) REFERENCES `PersonalProfesional` \(`id_persona`\);) N
+() N
+(--) c n
+(tp-db4.sql) (Page 8/9) (Apr 25, 12 19:52) title
+border
+grestore
+(Printed by chudi) rhead
+(tp-db4.sql) (4/5) (Wednesday April 25, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (9) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(-- Constraints for table `PersonalProfesionalPlantaPermanente`) c n
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `PersonalProfesionalPlantaPermanente`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `PersonalProfesionalPlantaPermanente_fk_id_persona` FOREIGN KEY) p n
+( \(`id_persona`\) REFERENCES `PersonalProfesional` \(`id_persona`\),) N
+(  ) S
+(ADD) K
+( CONSTRAINT `PersonalProfesionalPlantaPermanente_fk_n_area` FOREIGN KEY \(`n) p n
+(_area`\) REFERENCES `Area` \(`n_area`\);) N
+() N
+(--) c n
+(-- Constraints for table `TieneAccesoA`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `TieneAccesoA`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `TieneAccesoA_fk_hora_des` FOREIGN KEY \(`hora_des`, `hora_has`\)) p n
+( REFERENCES `Turno` \(`hora_des`, `hora_has`\),) N
+(  ) S
+(ADD) K
+( CONSTRAINT `TieneAccesoA_fk_id_persona` FOREIGN KEY \(`id_persona`\) REFEREN) p n
+(CES `PersonalNoProfesional` \(`id_persona`\),) N
+(  ) S
+(ADD) K
+( CONSTRAINT `TieneAccesoA_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `Are) p n
+(a` \(`n_area`\);) N
+() N
+(--) c n
+(-- Constraints for table `Trabajo`) N
+(--) N
+(ALTER) K
+( ) p
+(TABLE) K
+( `Trabajo`) p n
+(  ) S
+(ADD) K
+( CONSTRAINT `Trabajo_fk_id_persona` FOREIGN KEY \(`id_persona`\) REFERENCES `) p n
+(PersonalProfesionalContratado` \(`id_persona`\),) N
+(  ) S
+(ADD) K
+( CONSTRAINT `Trabajo_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `Area` \(`) p n
+(n_area`\);) N
+() N
+(/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */) c
+(;) p n
+(/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */) c
+(;) p n
+(/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */) c
+(;) p n
+(tp-db4.sql) (Page 9/9) (Apr 25, 12 19:52) title
+border
+grestore
+(Printed by chudi) rhead
+(tp-db4.sql) (5/5) (Wednesday April 25, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF
