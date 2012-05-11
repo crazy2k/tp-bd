@@ -1,0 +1,27 @@
+Pasos para cargar los datos a un servidor:
+
+- Primero es necesario tener instalado Mysql 5.5.
+
+- Luego crear una base de datos nueva en el servidor, usando por ejemplo "create database tp".
+
+- Finalmente cargar los datos en el servidor ejecutando en una terminal: "mysql -u root tp < tp-db5.sql". 
+  (O con algún otro usuario distinto de root).
+
+
+
+Comentario:
+
+Para generar los errores en los Stored Procedures se hizo uso del statement SIGNAL de Mysql 5.5:
+
+  http://dev.mysql.com/doc/refman/5.5/en/signal.html
+
+
+Como se puede leer en el siguiente FAQ contenido dentro de la documentación oficial de Mysql5.1, 
+esa versión ni tampoco ninguna otra version de Mysql menor a 5.5 posee medios para generar errores
+dentro de Stored Procedures, por lo que es usual que usuarios de estas versiones generen fallas 
+de algún otro tipo para poder abortar la ejecución de un Stored Procedure.
+
+  http://dev.mysql.com/doc/refman/5.1/en/faqs-stored-procs.html#qandaitem-B-4-1-12
+
+
+
