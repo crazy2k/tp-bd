@@ -493,6 +493,79 @@ INSERT INTO `Turno` VALUES ('00:00:00','08:00:00','noche'),('08:00:00','16:00:00
 UNLOCK TABLES;
 
 --
+-- Dumping routines for database 'tp_db'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `obtenerEmpleadosProfesionalesConAccesoATodasLasAreasDeSuNivel` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `obtenerEmpleadosProfesionalesConAccesoATodasLasAreasDeSuNivel`()
+BEGIN
+
+select p.nombre, p.apellido, p.id_persona 
+    from `Personal` p inner join `PersonalNoProfesional` pnp 
+        on (p.id_persona = pnp.id_persona)
+    where NOT EXISTS
+        (SELECT a.n_area from Area a
+            where a.nivel = pnp.nivel AND NOT EXISTS
+                (SELECT t.n_area from `TieneAccesoA` t
+                    where t.n_area = a.n_area AND t.id_persona = p.id_persona));
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `obtenerIngresosSospechosos` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `obtenerIngresosSospechosos`()
+BEGIN
+
+select p.nombre, p.apellido from `Personal` p where p.id_persona in 
+	(
+		select id_persona from (				
+			(select id_persona from (select i.id_persona, count(*) c
+				FROM  `IngresaAbandona` i
+				where fecha > DATE_SUB(NOW(), INTERVAL 1 MONTH)
+				and i.autorizado = false
+				group by (i.id_persona )
+				having (c >= 5)) x
+			)
+
+				union
+
+			(select i.id_persona from `IngresaAbandona` i, `Area` a
+				where i.n_area = a.n_area
+				and a.nivel > ( select max(b.nivel) from `Area` b, `TieneAccesoA` t
+								where t.n_area = b.n_area
+								and t.id_persona = i.id_persona
+							  )
+			)
+		) k
+	) ;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
 -- Final view structure for view `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`
 --
 
@@ -520,4 +593,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-05-11  7:57:13
+-- Dump completed on 2012-05-11  9:25:43
