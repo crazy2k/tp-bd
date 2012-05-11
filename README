@@ -2,9 +2,9 @@ Pasos para cargar los datos a un servidor:
 
 - Primero es necesario tener instalado Mysql 5.5.
 
-- Luego crear una base de datos nueva en el servidor, usando por ejemplo "create database tp".
+- Luego crear una base de datos nueva en el servidor, ejecutando por ejemplo, en el mismo: "CREATE DATABASE TP".
 
-- Finalmente cargar los datos en el servidor ejecutando en una terminal: "mysql -u root tp < tp-db5.sql". 
+- Finalmente cargar los datos en el servidor ejecutando en una terminal: "mysql -u root TP < tp-db.sql". 
   (O con algún otro usuario distinto de root).
 
 
