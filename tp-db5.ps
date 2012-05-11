@@ -1,0 +1,2445 @@
+%!PS-Adobe-3.0
+%%Title: tp-db5.sql
+%%For: pablo
+%%Creator: a2ps version 4.14
+%%CreationDate: Fri May 11 20:01:36 2012
+%%BoundingBox: 24 24 571 818
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 6
+%%PageOrder: Ascend
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed strings
+% Version 1.2 1/31/1990
+% Original Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 595 def
+/sw 842 def
+/llx 24 def
+/urx 818 def
+/ury 571 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 8.005733 def
+/cw 4.803440 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   501.959430 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(-- MySQL dump 10.13  Distrib 5.5.22, for debian-linux-gnu \(i686\)) c n
+(--) N
+(-- Host: localhost    Database: tp_db) N
+(-- ------------------------------------------------------) N
+(-- Server version) S 24 T (5.5.22-0ubuntu1) N
+() p n
+(/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */) c
+(;) p n
+(/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */) c
+(;) p n
+(/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */) c
+(;) p n
+(/*!40101 SET NAMES utf8 */) c
+(;) p n
+(/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */) c
+(;) p n
+(/*!40103 SET TIME_ZONE='+00:00' */) c
+(;) p n
+(/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */) c
+(;) p n
+(/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 ) c n
+(*/) S
+(;) p n
+(/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */) c
+(;) p n
+(/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */) c
+(;) p n
+() N
+(--) c n
+(-- Table structure for table `Area`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `Area`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `Area` \() p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+( AUTO_INCREMENT,) p n
+(  `nom_ar` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nivel` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`n_area`\),) N
+(  KEY `nivel` \(`nivel`\),) N
+(  CONSTRAINT `Area_fk_nivel` FOREIGN KEY \(`nivel`\) REFERENCES `NivelDeSeguridad`) N
+( \(`nivel`\)) N
+(\) ENGINE=InnoDB AUTO_INCREMENT=8 ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_c) p n
+(i;) N
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `Area`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `Area` WRITE;) p n
+(/*!40000 ALTER TABLE `Area` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Area` ) p
+(VALUES) K
+( \(1,') p
+(Laboratorio Secreto) str
+(',8000\),\(2,') p
+(Laboratorio Libre Acceso) str
+(',2000\)) p n
+(,\(3,') S
+(Laboratorio Nivel Medio) str
+(',4000\),\(4,') p
+(Lobby) str
+(',2000\),\(5,') p
+(Laboratorio para conquistar el mundo) str
+(',80) p n
+(00\),\(6,') S
+(Comedor) str
+(',4000\),\(7,') p
+(Laboratorio Nivel maximo) str
+(',8000\);) p n
+(/*!40000 ALTER TABLE `Area` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Table structure for table `Auditoria`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `Auditoria`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `Auditoria` \() p n
+(  `id_aud` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+( AUTO_INCREMENT,) p n
+(  `fecha` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `resultado` text COLLATE latin1_spanish_ci ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_contrato` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_aud`\),) N
+(tp-db5.sql) (Page 1/11) (may 11, 12 9:25) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  KEY `n_contrato` \(`n_contrato`\),) p n
+(  CONSTRAINT `Auditoria_fk_nro_contrato` FOREIGN KEY \(`n_contrato`\) REFERENCES `) N
+(Trabajo` \(`n_contrato`\)) N
+(\) ENGINE=InnoDB AUTO_INCREMENT=4 ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_c) p n
+(i;) N
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `Auditoria`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `Auditoria` WRITE;) p n
+(/*!40000 ALTER TABLE `Auditoria` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Auditoria` ) p
+(VALUES) K
+( \(1,') p
+(2012-04-09) str
+(',') p
+(Auditoria ok) str
+(',1\),\(2,') p
+(2012-06-06) str
+(',') p
+(Audit) str n
+(oria_not_ok) S
+(',2\),\(3,') p
+(2012-06-06) str
+(',') p
+(Auditoria_not_ok) str
+(',2\);) p n
+(/*!40000 ALTER TABLE `Auditoria` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+(/*!50003 SET @saved_cs_client      = @@character_set_client */) c
+( ;) p n
+(/*!50003 SET @saved_cs_results     = @@character_set_results */) c
+( ;) p n
+(/*!50003 SET @saved_col_connection = @@collation_connection */) c
+( ;) p n
+(/*!50003 SET character_set_client  = utf8 */) c
+( ;) p n
+(/*!50003 SET character_set_results = utf8 */) c
+( ;) p n
+(/*!50003 SET collation_connection  = utf8_general_ci */) c
+( ;) p n
+(/*!50003 SET @saved_sql_mode       = @@sql_mode */) c
+( ;) p n
+(/*!50003 SET sql_mode              = '' */) c
+( ;) p n
+(DELIMITER ;;) N
+(/*!50003 CREATE*/) c
+( ) p
+(/*!50017 DEFINER=`root`@`localhost`*/) c
+( ) p
+(/*!50003 TRIGGER `ins_Au) c n
+(ditoria` BEFORE INSERT ON `Auditoria`) N
+( FOR EACH ROW BEGIN) N
+() S 8 T (DECLARE) S 16 T (FECHA_INICIO_TRABAJO date;) N
+() N
+() S 8 T (SET FECHA_INICIO_TRABAJO = \(SELECT fecha_des FROM Trabajo WHERE Trabajo.) N
+(n_contrato = NEW.n_contrato\);) N
+() N
+() S 8 T (IF NEW.fecha < FECHA_INICIO_TRABAJO THEN ) N
+() S 8 T () S 16 T (SIGNAL SQLSTATE '45000') N
+(            SET MESSAGE_TEXT = 'La fecha de la auditoria no puede ser anterior a) N
+( la fecha de inicio del trabajo que audita';) N
+() S 8 T (END IF;) N
+(END */) S
+(;;) p n
+(DELIMITER ;) N
+(/*!50003 SET sql_mode              = @saved_sql_mode */) c
+( ;) p n
+(/*!50003 SET character_set_client  = @saved_cs_client */) c
+( ;) p n
+(/*!50003 SET character_set_results = @saved_cs_results */) c
+( ;) p n
+(/*!50003 SET collation_connection  = @saved_col_connection */) c
+( ;) p n
+() N
+(--) c n
+(-- Temporary table structure for view `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA) N
+(`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`;) p n
+(/*!50001 DROP VIEW IF EXISTS `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`*/) c
+(;) p n
+(SET) K
+( @saved_cs_client     = @@character_set_client;) p n
+(SET) K
+( character_set_client = utf8;) p n
+(/*!50001 CREATE TABLE `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA` \() c n
+(  `id_persona` int\(10\) unsigned,) N
+(  `n_area` int\(10\) unsigned) N
+(\) ENGINE=MyISAM */) S
+(;) p n
+(SET) K
+( character_set_client = @saved_cs_client;) p n
+() N
+(--) c n
+(tp-db5.sql) (Page 2/11) (may 11, 12 9:25) title
+border
+grestore
+(Printed by pablo) rhead
+(tp-db5.sql) (1/6) (viernes mayo 11, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(-- Table structure for table `Evento`) c n
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `Evento`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `Evento` \() p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nro_evento` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `descrp` ) S
+(varchar) K
+(\(300\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`n_area`,`nro_evento`\),) N
+(  CONSTRAINT `Evento_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `Area` \(`n_are) N
+(a`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `Evento`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `Evento` WRITE;) p n
+(/*!40000 ALTER TABLE `Evento` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Evento` ) p
+(VALUES) K
+( \(1,1,') p
+(2012-04-02) str
+(',') p
+(Llegada de materiales al laboratorio) str
+('\),\(2,2,') p
+(2) str n
+(012-03-20) S
+(',') p
+(Llegada del Catering para la inauguracion) str
+('\),\(2,3,') p
+(2012-03-28) str
+(',') p
+(Fiesta de inauguracion del lab) str n
+(oratorio) S
+('\);) p n
+(/*!40000 ALTER TABLE `Evento` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Table structure for table `IngresaAbandona`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `IngresaAbandona`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `IngresaAbandona` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nro_registro` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha` datetime ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `autorizado` tinyint\(1\) ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `accion` tinyint\(1\) ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`,`n_area`,`nro_registro`\),) N
+(  KEY `n_area` \(`n_area`\),) N
+(  CONSTRAINT `IngresaAbandona_fk_id_persona` FOREIGN KEY \(`id_persona`\) REFERENC) N
+(ES `Personal` \(`id_persona`\),) N
+(  CONSTRAINT `IngresaAbandona_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `Area) N
+(` \(`n_area`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `IngresaAbandona`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `IngresaAbandona` WRITE;) p n
+(/*!40000 ALTER TABLE `IngresaAbandona` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `IngresaAbandona` ) p
+(VALUES) K
+( \(1,1,2,') p
+(2012-04-10 03:00:00) str
+(',1,1\),\(1,1,3,') p
+(2012-0) str n
+(4-11 00:00:00) S
+(',0,0\),\(1,1,4,') p
+(2012-04-12 00:00:00) str
+(',0,0\),\(1,1,5,') p
+(2012-04-13 00:00:00) str
+(',0,0\),\(1,) p n
+(1,7,') S
+(2012-04-15 00:00:00) str
+(',0,0\),\(3,3,9,') p
+(2012-04-25 23:59:59) str
+(',0,0\),\(3,6,10,') p
+(2012-04-19 00:00:0) str n
+(0) S
+(',0,0\),\(4,3,8,') p
+(2012-04-12 00:00:00) str
+(',0,0\);) p n
+(tp-db5.sql) (Page 3/11) (may 11, 12 9:25) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(/*!40000 ALTER TABLE `IngresaAbandona` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Table structure for table `NivelDeSeguridad`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `NivelDeSeguridad`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `NivelDeSeguridad` \() p n
+(  `nivel` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+( AUTO_INCREMENT,) p n
+(  `nom_niv` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`nivel`\)) N
+(\) ENGINE=InnoDB AUTO_INCREMENT=8001 ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanis) p n
+(h_ci;) N
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `NivelDeSeguridad`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `NivelDeSeguridad` WRITE;) p n
+(/*!40000 ALTER TABLE `NivelDeSeguridad` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `NivelDeSeguridad` ) p
+(VALUES) K
+( \(2000,') p
+(bajo) str
+('\),\(4000,') p
+(medio) str
+('\),\(8000,') p
+(alto) str
+('\);) p n
+(/*!40000 ALTER TABLE `NivelDeSeguridad` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Table structure for table `Personal`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `Personal`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `Personal` \() p n
+(  `id_persona` int\(11\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+( AUTO_INCREMENT,) p n
+(  `nombre` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  `apellido` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  `contrasenia` ) S
+(varchar) K
+(\(20\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  `huella` ) S
+(varchar) K
+(\(200\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  `funcion` ) S
+(varchar) K
+(\(200\) COLLATE latin1_spanish_ci ) p
+(DEFAULT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\)) N
+(\) ENGINE=InnoDB AUTO_INCREMENT=11 ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_) p n
+(ci;) N
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `Personal`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `Personal` WRITE;) p n
+(/*!40000 ALTER TABLE `Personal` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Personal` ) p
+(VALUES) K
+( \(1,') p
+(Jacinto) str
+(',') p
+(Lugones) str
+(',') p
+(jlugones) str
+(',') p
+(jacintolugones) str
+(',') p
+(Jerarquico) str
+(') p n
+(\),\(2,') S
+(Carlos) str
+(',') p
+(Tevez) str
+(',') p
+(ctevez) str
+(',') p
+(carlostevez) str
+(',') p
+(Profesional) str
+('\),\(3,') p
+(Gustavo ) str
+(',') p
+(Lopez) str
+(',') p
+(glopez) str
+(',') p
+(gusta) str n
+(volopez) S
+(',') p
+(NoProfesional) str
+('\),\(4,') p
+(Gonzalo) str
+(',') p
+(Gonzalez) str
+(',') p
+(ggonzalez) str
+(',') p
+(gonzalogonzales) str
+(',') p
+(Jerarquico) str
+('\),\(5,) p n
+(') S
+(Honorio) str
+(',') p
+(Urquiza) str
+(',') p
+(hurquiza) str
+(',') p
+(honoriourquiza) str
+(',') p
+(Profesional) str
+('\),\(6,') p
+(Hernan) str
+(',') p
+(Diaz) str
+(',') p
+(hdiaz) str
+(',') p
+(hernan) str n
+(diaz) S
+(',') p
+(NoProfesional) str
+('\),\(7,') p
+(Leonardo) str
+(',') p
+(Astrada) str
+(',') p
+(lastrada) str
+(',') p
+(leonardoastrada) str
+(',') p
+(Jerarquico) str
+('\),\(8,') p
+(Ramir) str n
+(o) S
+(',') p
+(Rodriguez) str
+(',') p
+(rrodriguez) str
+(',') p
+(ramirorodriguez) str
+(',') p
+(Profesional) str
+('\),\(9,') p
+(Andres) str
+(',') p
+(Nocioni) str
+(',') p
+(anocioni) str
+(',') p
+(and) str n
+(resnocioni) S
+(',') p
+(Profesional) str
+('\),\(10,') p
+(orlando) str
+(',') p
+(lastrani) str
+(',') p
+(olastrani) str
+(',') p
+(orlandolastrani) str
+(',') p
+(NoProfesional) str
+('\);) p n
+(/*!40000 ALTER TABLE `Personal` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+(tp-db5.sql) (Page 4/11) (may 11, 12 9:25) title
+border
+grestore
+(Printed by pablo) rhead
+(tp-db5.sql) (2/6) (viernes mayo 11, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(--) c n
+(-- Table structure for table `PersonalJerarquico`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `PersonalJerarquico`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `PersonalJerarquico` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha_ini` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\),) N
+(  KEY `n_area` \(`n_area`\),) N
+(  KEY `n_area_2` \(`n_area`\),) N
+(  CONSTRAINT `PersonalJerarquico_fk_id_persona` FOREIGN KEY \(`id_persona`\) REFER) N
+(ENCES `Personal` \(`id_persona`\),) N
+(  CONSTRAINT `PersonalJerarquico_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `A) N
+(rea` \(`n_area`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalJerarquico`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `PersonalJerarquico` WRITE;) p n
+(/*!40000 ALTER TABLE `PersonalJerarquico` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalJerarquico` ) p
+(VALUES) K
+( \(1,') p
+(2012-04-22) str
+(',1\),\(4,') p
+(2012-04-22) str
+(',2\),\(7,') p
+(2) str n
+(012-04-22) S
+(',3\);) p n
+(/*!40000 ALTER TABLE `PersonalJerarquico` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Table structure for table `PersonalNoProfesional`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `PersonalNoProfesional`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `PersonalNoProfesional` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nivel` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\),) N
+(  KEY `nivel` \(`nivel`\),) N
+(  CONSTRAINT `PersonalNoProfesional_ibfk_1` FOREIGN KEY \(`id_persona`\) REFERENCE) N
+(S `Personal` \(`id_persona`\),) N
+(  CONSTRAINT `PersonalNoProfesional_ibfk_2` FOREIGN KEY \(`nivel`\) REFERENCES `Ni) N
+(velDeSeguridad` \(`nivel`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalNoProfesional`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `PersonalNoProfesional` WRITE;) p n
+(/*!40000 ALTER TABLE `PersonalNoProfesional` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalNoProfesional` ) p
+(VALUES) K
+( \(3,2000\),\(6,4000\),\(10,8000\);) p n
+(/*!40000 ALTER TABLE `PersonalNoProfesional` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(tp-db5.sql) (Page 5/11) (may 11, 12 9:25) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(--) c n
+(-- Table structure for table `PersonalProfesional`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `PersonalProfesional`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `PersonalProfesional` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `especialidad` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `tipo` ) S
+(varchar) K
+(\(200\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\),) N
+(  CONSTRAINT `PersonalProfesional_fk_id_persona` FOREIGN KEY \(`id_persona`\) REFE) N
+(RENCES `Personal` \(`id_persona`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalProfesional`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `PersonalProfesional` WRITE;) p n
+(/*!40000 ALTER TABLE `PersonalProfesional` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalProfesional` ) p
+(VALUES) K
+( \(2,') p
+(Cientifico) str
+(',') p
+(PlantaPermanente) str
+('\),\(5,') p
+(Bacteriol) str n
+(ogo) S
+(',') p
+(PlantaPermanente) str
+('\),\(8,') p
+(Fisico Nuclear) str
+(',') p
+(Contratado) str
+('\),\(9,') p
+(Analista) str
+(',') p
+(Contratado) str
+('\);) p n
+(/*!40000 ALTER TABLE `PersonalProfesional` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Table structure for table `PersonalProfesionalContratado`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `PersonalProfesionalContratado`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `PersonalProfesionalContratado` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\),) N
+(  CONSTRAINT `PersonalProfesionalContratado_fk_id_persona` FOREIGN KEY \(`id_pers) N
+(ona`\) REFERENCES `PersonalProfesional` \(`id_persona`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalProfesionalContratado`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `PersonalProfesionalContratado` WRITE;) p n
+(/*!40000 ALTER TABLE `PersonalProfesionalContratado` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalProfesionalContratado` ) p
+(VALUES) K
+( \(8\),\(9\);) p n
+(/*!40000 ALTER TABLE `PersonalProfesionalContratado` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Table structure for table `PersonalProfesionalPlantaPermanente`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `PersonalProfesionalPlantaPermanente`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `PersonalProfesionalPlantaPermanente` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(tp-db5.sql) (Page 6/11) (may 11, 12 9:25) title
+border
+grestore
+(Printed by pablo) rhead
+(tp-db5.sql) (3/6) (viernes mayo 11, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  `n_area` int\(10\) unsigned ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`id_persona`\),) N
+(  KEY `n_area` \(`n_area`\),) N
+(  CONSTRAINT `PersonalProfesionalPlantaPermanente_fk_id_persona` FOREIGN KEY \(`i) N
+(d_persona`\) REFERENCES `PersonalProfesional` \(`id_persona`\),) N
+(  CONSTRAINT `PersonalProfesionalPlantaPermanente_fk_n_area` FOREIGN KEY \(`n_are) N
+(a`\) REFERENCES `Area` \(`n_area`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `PersonalProfesionalPlantaPermanente`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `PersonalProfesionalPlantaPermanente` WRITE;) p n
+(/*!40000 ALTER TABLE `PersonalProfesionalPlantaPermanente` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `PersonalProfesionalPlantaPermanente` ) p
+(VALUES) K
+( \(2,1\),\(5,2\);) p n
+(/*!40000 ALTER TABLE `PersonalProfesionalPlantaPermanente` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Table structure for table `TieneAccesoA`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `TieneAccesoA`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `TieneAccesoA` \() p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `hora_des` time ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `hora_has` time ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`n_area`,`hora_des`,`hora_has`,`id_persona`\),) N
+(  KEY `hora_has` \(`hora_has`\),) N
+(  KEY `id_persona` \(`id_persona`\),) N
+(  KEY `hora_des` \(`hora_des`,`hora_has`\),) N
+(  CONSTRAINT `TieneAccesoA_fk_hora_des` FOREIGN KEY \(`hora_des`, `hora_has`\) REF) N
+(ERENCES `Turno` \(`hora_des`, `hora_has`\),) N
+(  CONSTRAINT `TieneAccesoA_fk_id_persona` FOREIGN KEY \(`id_persona`\) REFERENCES ) N
+(`PersonalNoProfesional` \(`id_persona`\),) N
+(  CONSTRAINT `TieneAccesoA_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `Area` \() N
+(`n_area`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `TieneAccesoA`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `TieneAccesoA` WRITE;) p n
+(/*!40000 ALTER TABLE `TieneAccesoA` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `TieneAccesoA` ) p
+(VALUES) K
+( \(1,') p
+(16:00:00) str
+(',') p
+(00:00:00) str
+(',10\),\(2,') p
+(00:00:00) str
+(',') p
+(08:00:00) str
+(',) p n
+(3\),\(5,') S
+(00:00:00) str
+(',') p
+(08:00:00) str
+(',10\),\(2,') p
+(08:00:00) str
+(',') p
+(16:00:00) str
+(',3\),\(3,') p
+(08:00:00) str
+(',') p
+(16:00:00) str
+(',6\),\(4,') p
+() str n
+(08:00:00) S
+(',') p
+(16:00:00) str
+(',3\);) p n
+(/*!40000 ALTER TABLE `TieneAccesoA` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+(/*!50003 SET @saved_cs_client      = @@character_set_client */) c
+( ;) p n
+(/*!50003 SET @saved_cs_results     = @@character_set_results */) c
+( ;) p n
+(/*!50003 SET @saved_col_connection = @@collation_connection */) c
+( ;) p n
+(/*!50003 SET character_set_client  = utf8 */) c
+( ;) p n
+(/*!50003 SET character_set_results = utf8 */) c
+( ;) p n
+(/*!50003 SET collation_connection  = utf8_general_ci */) c
+( ;) p n
+(tp-db5.sql) (Page 7/11) (may 11, 12 9:25) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(/*!50003 SET @saved_sql_mode       = @@sql_mode */) c
+( ;) p n
+(/*!50003 SET sql_mode              = '' */) c
+( ;) p n
+(DELIMITER ;;) N
+(/*!50003 CREATE*/) c
+( ) p
+(/*!50017 DEFINER=`root`@`localhost`*/) c
+( ) p
+(/*!50003 TRIGGER `ins_Ti) c n
+(eneAccesoA` BEFORE INSERT ON `TieneAccesoA`) N
+( FOR EACH ROW BEGIN) N
+() S 8 T (DECLARE) S 16 T (NIVELAREA int;) N
+() S 8 T (DECLARE) S 16 T (NIVELPERSONAL int;) N
+() N
+() S 8 T (SET NIVELAREA = \(SELECT NIVEL FROM Area WHERE N_AREA = NEW.N_AREA\);) N
+() S 8 T (SET NIVELPERSONAL = \(SELECT NIVEL FROM PersonalNoProfesional WHERE ID_PE) N
+(RSONA = NEW.ID_PERSONA\);) N
+() N
+() S 8 T (IF NIVELPERSONAL <> NIVELAREA THEN ) N
+() S 8 T () S 16 T (SIGNAL SQLSTATE '45000') N
+(            SET MESSAGE_TEXT = 'Nivel no autorizado';) N
+() S 8 T (END IF;) N
+(END */) S
+(;;) p n
+(DELIMITER ;) N
+(/*!50003 SET sql_mode              = @saved_sql_mode */) c
+( ;) p n
+(/*!50003 SET character_set_client  = @saved_cs_client */) c
+( ;) p n
+(/*!50003 SET character_set_results = @saved_cs_results */) c
+( ;) p n
+(/*!50003 SET collation_connection  = @saved_col_connection */) c
+( ;) p n
+() N
+(--) c n
+(-- Table structure for table `Trabajo`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `Trabajo`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `Trabajo` \() p n
+(  `id_persona` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_area` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha_des` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `fecha_has` ) S
+(date) K
+( ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `tarea` ) S
+(varchar) K
+(\(200\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `n_contrato` int\(10\) unsigned ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`n_contrato`\),) N
+(  KEY `n_contrato` \(`n_contrato`\),) N
+(  KEY `n_area` \(`n_area`\),) N
+(  KEY `Trabajo_fk_id_persona` \(`id_persona`\),) N
+(  CONSTRAINT `Trabajo_fk_id_persona` FOREIGN KEY \(`id_persona`\) REFERENCES `Pers) N
+(onalProfesionalContratado` \(`id_persona`\),) N
+(  CONSTRAINT `Trabajo_fk_n_area` FOREIGN KEY \(`n_area`\) REFERENCES `Area` \(`n_ar) N
+(ea`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `Trabajo`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `Trabajo` WRITE;) p n
+(/*!40000 ALTER TABLE `Trabajo` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Trabajo` ) p
+(VALUES) K
+( \(8,1,') p
+(2012-04-02) str
+(',') p
+(2012-04-06) str
+(',') p
+(Investigacion) str
+(',1\),\(9,2,') p
+(20) str n
+(12-04-02) S
+(',') p
+(2012-04-06) str
+(',') p
+(Desarrollo) str
+(',2\);) p n
+(/*!40000 ALTER TABLE `Trabajo` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+(/*!50003 SET @saved_cs_client      = @@character_set_client */) c
+( ;) p n
+(/*!50003 SET @saved_cs_results     = @@character_set_results */) c
+( ;) p n
+(/*!50003 SET @saved_col_connection = @@collation_connection */) c
+( ;) p n
+(tp-db5.sql) (Page 8/11) (may 11, 12 9:25) title
+border
+grestore
+(Printed by pablo) rhead
+(tp-db5.sql) (4/6) (viernes mayo 11, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (9-10) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(/*!50003 SET character_set_client  = utf8 */) c
+( ;) p n
+(/*!50003 SET character_set_results = utf8 */) c
+( ;) p n
+(/*!50003 SET collation_connection  = utf8_general_ci */) c
+( ;) p n
+(/*!50003 SET @saved_sql_mode       = @@sql_mode */) c
+( ;) p n
+(/*!50003 SET sql_mode              = '' */) c
+( ;) p n
+(DELIMITER ;;) N
+(/*!50003 CREATE*/) c
+( ) p
+(/*!50017 DEFINER=`root`@`localhost`*/) c
+( ) p
+(/*!50003 TRIGGER `ins_fe) c n
+(cha_correcta` BEFORE INSERT ON `Trabajo`) N
+( FOR EACH ROW BEGIN) N
+(    IF NEW.FECHA_DES > NEW.FECHA_HAS THEN) N
+(        SIGNAL SQLSTATE '45000') N
+(            SET MESSAGE_TEXT = 'Fecha desde es mayor que fecha hasta';) N
+() S 8 T (END IF;) N
+(    ) N
+( END */) S
+(;;) p n
+(DELIMITER ;) N
+(/*!50003 SET sql_mode              = @saved_sql_mode */) c
+( ;) p n
+(/*!50003 SET character_set_client  = @saved_cs_client */) c
+( ;) p n
+(/*!50003 SET character_set_results = @saved_cs_results */) c
+( ;) p n
+(/*!50003 SET collation_connection  = @saved_col_connection */) c
+( ;) p n
+() N
+(--) c n
+(-- Table structure for table `Turno`) N
+(--) N
+() p n
+(DROP) K
+( ) p
+(TABLE) K
+( IF ) p
+(EXISTS) K
+( `Turno`;) p n
+(/*!40101 SET @saved_cs_client     = @@character_set_client */) c
+(;) p n
+(/*!40101 SET character_set_client = utf8 */) c
+(;) p n
+(CREATE) K
+( ) p
+(TABLE) K
+( `Turno` \() p n
+(  `hora_des` time ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `hora_has` time ) S
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  `nom_tur` ) S
+(varchar) K
+(\(100\) COLLATE latin1_spanish_ci ) p
+(NOT) K
+( ) p
+(NULL) K
+(,) p n
+(  PRIMARY KEY \(`hora_des`,`hora_has`\),) N
+(  KEY `hora_has` \(`hora_has`\)) N
+(\) ENGINE=InnoDB ) S
+(DEFAULT) K
+( CHARSET=latin1 COLLATE=latin1_spanish_ci;) p n
+(/*!40101 SET character_set_client = @saved_cs_client */) c
+(;) p n
+() N
+(--) c n
+(-- Dumping data for table `Turno`) N
+(--) N
+() p n
+(LOCK) K
+( TABLES `Turno` WRITE;) p n
+(/*!40000 ALTER TABLE `Turno` DISABLE KEYS */) c
+(;) p n
+(INSERT) K
+( ) p
+(INTO) K
+( `Turno` ) p
+(VALUES) K
+( \(') p
+(00:00:00) str
+(',') p
+(08:00:00) str
+(',') p
+(noche) str
+('\),\(') p
+(08:00:00) str
+(',') p
+(16:00:00) str
+(',') p
+(ma\303\261an) str n
+(a) S
+('\),\(') p
+(16:00:00) str
+(',') p
+(00:00:00) str
+(',') p
+(tarde) str
+('\);) p n
+(/*!40000 ALTER TABLE `Turno` ENABLE KEYS */) c
+(;) p n
+(UNLOCK TABLES;) N
+() N
+(--) c n
+(-- Dumping routines for database 'tp_db') N
+(--) N
+(/*!50003 DROP PROCEDURE IF EXISTS `obtenerEmpleadosProfesionalesConAccesoATodasL) N
+(asAreasDeSuNivel` */) S
+(;) p n
+(/*!50003 SET @saved_cs_client      = @@character_set_client */) c
+( ;) p n
+(/*!50003 SET @saved_cs_results     = @@character_set_results */) c
+( ;) p n
+(/*!50003 SET @saved_col_connection = @@collation_connection */) c
+( ;) p n
+(/*!50003 SET character_set_client  = utf8 */) c
+( ;) p n
+(/*!50003 SET character_set_results = utf8 */) c
+( ;) p n
+(/*!50003 SET collation_connection  = utf8_general_ci */) c
+( ;) p n
+(/*!50003 SET @saved_sql_mode       = @@sql_mode */) c
+( ;) p n
+(/*!50003 SET sql_mode              = '' */) c
+( ;) p n
+(DELIMITER ;;) N
+(tp-db5.sql) (Page 9/11) (may 11, 12 9:25) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(/*!50003 CREATE*/) c
+( ) p
+(/*!50020 DEFINER=`root`@`localhost`*/) c
+( ) p
+(/*!50003 PROCEDURE `obte) c n
+(nerEmpleadosProfesionalesConAccesoATodasLasAreasDeSuNivel`\(\)) N
+(BEGIN) N
+() N
+(select p.nombre, p.apellido, p.id_persona ) N
+(    from `Personal` p inner join `PersonalNoProfesional` pnp ) N
+(        on \(p.id_persona = pnp.id_persona\)) N
+(    where NOT EXISTS) N
+(        \(SELECT a.n_area from Area a) N
+(            where a.nivel = pnp.nivel AND NOT EXISTS) N
+(                \(SELECT t.n_area from `TieneAccesoA` t) N
+(                    where t.n_area = a.n_area AND t.id_persona = p.id_persona\)\);) N
+() N
+(END */) S
+(;;) p n
+(DELIMITER ;) N
+(/*!50003 SET sql_mode              = @saved_sql_mode */) c
+( ;) p n
+(/*!50003 SET character_set_client  = @saved_cs_client */) c
+( ;) p n
+(/*!50003 SET character_set_results = @saved_cs_results */) c
+( ;) p n
+(/*!50003 SET collation_connection  = @saved_col_connection */) c
+( ;) p n
+(/*!50003 DROP PROCEDURE IF EXISTS `obtenerIngresosSospechosos` */) c
+(;) p n
+(/*!50003 SET @saved_cs_client      = @@character_set_client */) c
+( ;) p n
+(/*!50003 SET @saved_cs_results     = @@character_set_results */) c
+( ;) p n
+(/*!50003 SET @saved_col_connection = @@collation_connection */) c
+( ;) p n
+(/*!50003 SET character_set_client  = utf8 */) c
+( ;) p n
+(/*!50003 SET character_set_results = utf8 */) c
+( ;) p n
+(/*!50003 SET collation_connection  = utf8_general_ci */) c
+( ;) p n
+(/*!50003 SET @saved_sql_mode       = @@sql_mode */) c
+( ;) p n
+(/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */) c
+( ;) p n
+(DELIMITER ;;) N
+(/*!50003 CREATE*/) c
+( ) p
+(/*!50020 DEFINER=`root`@`localhost`*/) c
+( ) p
+(/*!50003 PROCEDURE `obte) c n
+(nerIngresosSospechosos`\(\)) N
+(BEGIN) N
+() N
+(select p.nombre, p.apellido from `Personal` p where p.id_persona in ) N
+() S 8 T (\() N
+() S 8 T () S 16 T (select id_persona from \() S 48 T () S 56 T () S 64 T () S 72 T () N
+() S 8 T () S 16 T () S 24 T (\(select id_persona from \(select i.id_persona, count\(*\) c) N
+() S 8 T () S 16 T () S 24 T () S 32 T (FROM  `IngresaAbandona` i) N
+() S 8 T () S 16 T () S 24 T () S 32 T (where fecha > DATE_SUB\(NOW\(\), INTERVAL 1 MONTH\)) N
+() S 8 T () S 16 T () S 24 T () S 32 T (and i.autorizado = false) N
+() S 8 T () S 16 T () S 24 T () S 32 T (group by \(i.id_persona \)) N
+() S 8 T () S 16 T () S 24 T () S 32 T (having \(c >= 5\)\) x) N
+() S 8 T () S 16 T () S 24 T (\)) N
+() N
+() S 8 T () S 16 T () S 24 T () S 32 T (union) N
+() N
+() S 8 T () S 16 T () S 24 T (\(select i.id_persona from `IngresaAbandona` i, `Area` a) N
+() S 8 T () S 16 T () S 24 T () S 32 T (where i.n_area = a.n_area) N
+() S 8 T () S 16 T () S 24 T () S 32 T (and a.nivel > \( select max\(b.nivel\) from `Area` ) N
+(b, `TieneAccesoA` t) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T (where t.n_area =) N
+( b.n_area) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T (and t.id_persona) N
+( = i.id_persona) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T (  \)) N
+() S 8 T () S 16 T () S 24 T (\)) N
+() S 8 T () S 16 T (\) k) N
+() S 8 T (\) ;) N
+(END */) S
+(;;) p n
+(DELIMITER ;) N
+(/*!50003 SET sql_mode              = @saved_sql_mode */) c
+( ;) p n
+(/*!50003 SET character_set_client  = @saved_cs_client */) c
+( ;) p n
+(tp-db5.sql) (Page 10/11) (may 11, 12 9:25) title
+border
+grestore
+(Printed by pablo) rhead
+(tp-db5.sql) (5/6) (viernes mayo 11, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (11) 6
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(/*!50003 SET character_set_results = @saved_cs_results */) c
+( ;) p n
+(/*!50003 SET collation_connection  = @saved_col_connection */) c
+( ;) p n
+() N
+(--) c n
+(-- Final view structure for view `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`) N
+(--) N
+() p n
+(/*!50001 DROP TABLE IF EXISTS `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`*/) c
+(;) p n
+(/*!50001 DROP VIEW IF EXISTS `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA`*/) c
+(;) p n
+(/*!50001 SET @saved_cs_client          = @@character_set_client */) c
+(;) p n
+(/*!50001 SET @saved_cs_results         = @@character_set_results */) c
+(;) p n
+(/*!50001 SET @saved_col_connection     = @@collation_connection */) c
+(;) p n
+(/*!50001 SET character_set_client      = utf8 */) c
+(;) p n
+(/*!50001 SET character_set_results     = utf8 */) c
+(;) p n
+(/*!50001 SET collation_connection      = utf8_general_ci */) c
+(;) p n
+(/*!50001 CREATE ALGORITHM=UNDEFINED */) c n
+(/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */) N
+(/*!50001 VIEW `EMPLEADOS_INTENTO_ACCESO_AREA_RESTRINGIDA` AS select `p`.`id_pers) N
+(ona` AS `id_persona`,`p`.`n_area` AS `n_area` from `IngresaAbandona` `p` where \() N
+(\(`p`.`fecha` >= curdate\(\)\) and \(`p`.`autorizado` = 0\) and \(not\(exists\(select `i`) N
+(.`id_persona` from `IngresaAbandona` `i` where \(\(`i`.`id_persona` = `p`.`id_pers) N
+(ona`\) and \(`p`.`fecha` > `i`.`fecha`\) and \(`p`.`n_area` = `i`.`n_area`\) and \(`i`) N
+(.`autorizado` = 1\)\)\)\)\)\) */) S
+(;) p n
+(/*!50001 SET character_set_client      = @saved_cs_client */) c
+(;) p n
+(/*!50001 SET character_set_results     = @saved_cs_results */) c
+(;) p n
+(/*!50001 SET collation_connection      = @saved_col_connection */) c
+(;) p n
+(/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */) c
+(;) p n
+() N
+(/*!40101 SET SQL_MODE=@OLD_SQL_MODE */) c
+(;) p n
+(/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */) c
+(;) p n
+(/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */) c
+(;) p n
+(/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */) c
+(;) p n
+(/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */) c
+(;) p n
+(/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */) c
+(;) p n
+(/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */) c
+(;) p n
+() N
+(-- Dump completed on 2012-05-11  9:25:43) c n
+(tp-db5.sql) (Page 11/11) (may 11, 12 9:25) title
+border
+grestore
+(Printed by pablo) rhead
+(tp-db5.sql) (6/6) (viernes mayo 11, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF
